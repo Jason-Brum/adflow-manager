@@ -53,4 +53,13 @@ public class CampaignService {
 
     return campaignRepository.save(campaign);
     }
+
+    public boolean delete(Long id) {
+    if (!campaignRepository.existsById(id)) {
+        return false;
+    }
+
+    campaignRepository.deleteById(id);
+    return true;
+    }
 }

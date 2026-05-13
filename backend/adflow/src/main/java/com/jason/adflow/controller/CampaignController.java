@@ -55,4 +55,15 @@ public class CampaignController {
         return ResponseEntity.ok(updatedCampaign);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    boolean deleted = campaignService.delete(id);
+
+    if (!deleted) {
+        return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.noContent().build();
+    }
+
 }
