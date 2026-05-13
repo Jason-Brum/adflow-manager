@@ -1,5 +1,6 @@
 package com.jason.adflow.controller;
 
+import com.jason.adflow.dto.CampaignDTO;
 import com.jason.adflow.entity.Campaign;
 import com.jason.adflow.service.CampaignService;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class CampaignController {
     }
 
     @PostMapping
-    public Campaign create(@RequestBody Campaign campaign) {
-        return campaignService.save(campaign);
+    public Campaign create(@RequestBody CampaignDTO campaignDTO) {
+        return campaignService.save(campaignDTO);
     }
 }
