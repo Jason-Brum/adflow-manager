@@ -3,6 +3,8 @@ package com.jason.adflow.controller;
 import com.jason.adflow.dto.CampaignDTO;
 import com.jason.adflow.entity.Campaign;
 import com.jason.adflow.service.CampaignService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,18 @@ public class CampaignController {
     @GetMapping
     public List<Campaign> findAll() {
         return campaignService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Campaign> findById(@PathVariable Long id) {
+
+        Campaign campaign = campaignService.findById(id);
+
+        if (campaign == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(campaign);
     }
 
     @PostMapping

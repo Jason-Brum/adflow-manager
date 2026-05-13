@@ -32,4 +32,8 @@ public class CampaignService {
 
         return campaignRepository.save(campaign);
     }
+
+    public Campaign findById(Long id) {
+    return campaignRepository.findById(id).orElse(null);
+    }
 }
