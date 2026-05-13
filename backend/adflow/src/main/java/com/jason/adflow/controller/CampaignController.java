@@ -6,10 +6,12 @@ import com.jason.adflow.service.CampaignService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 
 import jakarta.validation.Valid;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/campaigns")
@@ -22,8 +24,8 @@ public class CampaignController {
     }
 
     @GetMapping
-    public List<Campaign> findAll() {
-        return campaignService.findAll();
+    public Page<Campaign> findAll(Pageable pageable) {
+        return campaignService.findAll(pageable);
     }
 
     @GetMapping("/{id}")

@@ -4,8 +4,8 @@ import com.jason.adflow.dto.CampaignDTO;
 import com.jason.adflow.entity.Campaign;
 import com.jason.adflow.repository.CampaignRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class CampaignService {
@@ -16,9 +16,9 @@ public class CampaignService {
         this.campaignRepository = campaignRepository;
     }
 
-    public List<Campaign> findAll() {
-        return campaignRepository.findAll();
-    }
+    public Page<Campaign> findAll(Pageable pageable) {
+    return campaignRepository.findAll(pageable);
+}
 
     public Campaign save(CampaignDTO campaignDTO) {
         Campaign campaign = new Campaign();
