@@ -16,9 +16,13 @@ public class CampaignService {
         this.campaignRepository = campaignRepository;
     }
 
-    public Page<Campaign> findAll(Pageable pageable) {
+    public Page<Campaign> findAll(String platform, Pageable pageable) {
+    if (platform != null && !platform.isBlank()) {
+        return campaignRepository.findByPlatformContainingIgnoreCase(platform, pageable);
+    }
+
     return campaignRepository.findAll(pageable);
-}
+    }
 
     public Campaign save(CampaignDTO campaignDTO) {
         Campaign campaign = new Campaign();

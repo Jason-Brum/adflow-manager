@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 import jakarta.validation.Valid;
@@ -24,8 +25,12 @@ public class CampaignController {
     }
 
     @GetMapping
-    public Page<Campaign> findAll(Pageable pageable) {
-        return campaignService.findAll(pageable);
+    public Page<Campaign> findAll(
+        @RequestParam(required = false) String platform,
+        Pageable pageable) 
+        
+        {
+        return campaignService.findAll(platform, pageable);
     }
 
     @GetMapping("/{id}")
