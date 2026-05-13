@@ -7,6 +7,8 @@ import com.jason.adflow.service.CampaignService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -37,14 +39,14 @@ public class CampaignController {
     }
 
     @PostMapping
-    public Campaign create(@RequestBody CampaignDTO campaignDTO) {
+    public Campaign create(@RequestBody @Valid CampaignDTO campaignDTO) {
         return campaignService.save(campaignDTO);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Campaign> update(
             @PathVariable Long id,
-            @RequestBody CampaignDTO campaignDTO
+            @Valid @RequestBody CampaignDTO campaignDTO
     ) {
         Campaign updatedCampaign = campaignService.update(id, campaignDTO);
 
