@@ -40,4 +40,19 @@ public class CampaignController {
     public Campaign create(@RequestBody CampaignDTO campaignDTO) {
         return campaignService.save(campaignDTO);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Campaign> update(
+            @PathVariable Long id,
+            @RequestBody CampaignDTO campaignDTO
+    ) {
+        Campaign updatedCampaign = campaignService.update(id, campaignDTO);
+
+        if (updatedCampaign == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(updatedCampaign);
+    }
+
 }

@@ -36,4 +36,21 @@ public class CampaignService {
     public Campaign findById(Long id) {
     return campaignRepository.findById(id).orElse(null);
     }
+
+    public Campaign update(Long id, CampaignDTO campaignDTO) {
+    Campaign campaign = campaignRepository.findById(id).orElse(null);
+
+    if (campaign == null) {
+        return null;
+    }
+
+    campaign.setName(campaignDTO.getName());
+    campaign.setPlatform(campaignDTO.getPlatform());
+    campaign.setBudget(campaignDTO.getBudget());
+    campaign.setImpressions(campaignDTO.getImpressions());
+    campaign.setClicks(campaignDTO.getClicks());
+    campaign.setActive(campaignDTO.getActive());
+
+    return campaignRepository.save(campaign);
+    }
 }
