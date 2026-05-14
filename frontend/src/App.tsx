@@ -107,6 +107,23 @@ const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = u
       });
   }
 
+  function handleDelete(id: number) {
+  const confirmed = window.confirm(
+    "Tem certeza que deseja excluir esta campanha?"
+  );
+
+  if (!confirmed) return;
+
+  axios
+    .delete(`http://localhost:8080/campaigns/${id}`)
+    .then(() => {
+      loadCampaigns();
+    })
+    .catch((error) => {
+      console.error("Erro ao excluir campanha:", error);
+    });
+}
+
   return (
     <div className="min-h-screen bg-gray-100 p-10">
       <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8">
@@ -203,6 +220,7 @@ const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = u
               <th className="p-4">Plataforma</th>
               <th className="p-4">Budget</th>
               <th className="p-4">Status</th>
+              <th className="p-4">Ações</th>
             </tr>
           </thead>
 
@@ -244,6 +262,14 @@ const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = u
                   >
                     {campaign.active ? "Ativa" : "Inativa"}
                   </span>
+                </td>
+                <td className="p-4">
+                  <button
+                    onClick={() => handleDelete(campaign.id)}
+                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm"
+                  >
+                    Excluir
+                  </button>
                 </td>
               </tr>
             ))
