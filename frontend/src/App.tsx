@@ -23,30 +23,51 @@ function App() {
   }, []);
 
   return (
-    <div style={{ padding: "40px", fontFamily: "Arial" }}>
-      <h1>AdFlow Manager</h1>
+    <div className="min-h-screen bg-gray-100 p-10">
+      <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-800">
+              AdFlow Manager
+            </h1>
 
-      <table border={1} cellPadding={10}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Plataforma</th>
-            <th>Budget</th>
-          </tr>
-        </thead>
+            <p className="text-gray-500 mt-2">
+              Gestão de campanhas publicitárias
+            </p>
+          </div>
 
-        <tbody>
-          {campaigns.map((campaign) => (
-            <tr key={campaign.id}>
-              <td>{campaign.id}</td>
-              <td>{campaign.name}</td>
-              <td>{campaign.platform}</td>
-              <td>{campaign.budget}</td>
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-medium transition">
+            Nova campanha
+          </button>
+        </div>
+
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-gray-200 text-left">
+              <th className="p-4">ID</th>
+              <th className="p-4">Nome</th>
+              <th className="p-4">Plataforma</th>
+              <th className="p-4">Budget</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {campaigns.map((campaign) => (
+              <tr
+                key={campaign.id}
+                className="border-b hover:bg-gray-50 transition"
+              >
+                <td className="p-4">{campaign.id}</td>
+                <td className="p-4 font-medium">{campaign.name}</td>
+                <td className="p-4">{campaign.platform}</td>
+                <td className="p-4">
+                  R$ {campaign.budget.toLocaleString("pt-BR")}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
