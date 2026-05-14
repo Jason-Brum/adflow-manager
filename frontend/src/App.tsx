@@ -172,7 +172,7 @@ const filteredCampaigns = campaigns.filter((campaign) =>
             onClick={() => setShowForm(!showForm)}
             className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-medium transition"
           >
-            Nova campanha
+            {showForm ? "Fechar formulário" : "Nova campanha"}
           </button>
         </div>
 
@@ -237,10 +237,14 @@ const filteredCampaigns = campaigns.filter((campaign) =>
               type="submit"
               className="col-span-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl font-medium transition"
             >
-              Salvar campanha
+              {editingId ? "Salvar alterações" : "Salvar campanha"}
             </button>
           </form>
         )}
+
+        <p className="text-sm text-gray-500 mb-2">
+          Busque campanhas pelo nome
+        </p>
 
         <input
           className="w-full mb-6 p-3 border rounded-lg"
@@ -264,8 +268,11 @@ const filteredCampaigns = campaigns.filter((campaign) =>
           <tbody>
           {loading ? (
             <tr>
-              <td colSpan={6} className="p-6 text-center text-gray-500">
-                Carregando campanhas...
+              <td colSpan={6} className="p-8 text-center text-gray-500">
+                <div className="flex items-center justify-center gap-3">
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+                  <span>Carregando campanhas...</span>
+                </div>
               </td>
             </tr>
           ) : filteredCampaigns.length === 0 ? (
