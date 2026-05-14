@@ -8,10 +8,29 @@ type Campaign = {
   budget: number;
 };
 
+type CampaignForm = {
+  name: string;
+  platform: string;
+  budget: string;
+  impressions: string;
+  clicks: string;
+  active: boolean;
+};
+
 function App() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [showForm, setShowForm] = useState(false);
 
-  useEffect(() => {
+  const [form, setForm] = useState<CampaignForm>({
+    name: "",
+    platform: "",
+    budget: "",
+    impressions: "",
+    clicks: "",
+    active: true,
+  });
+
+  function loadCampaigns() {
     axios
       .get("http://localhost:8080/campaigns")
       .then((response) => {
@@ -20,7 +39,41 @@ function App() {
       .catch((error) => {
         console.error("Erro ao buscar campanhas:", error);
       });
+  }
+
+  useEffect(() => {
+    loadCampaigns();
   }, []);
+
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+
+    axios
+      .post("http://localhost:8080/campaigns", {
+        name: form.name,
+        platform: form.platform,
+        budget: Number(form.budget),
+        impressions: Number(form.impressions),
+        clicks: Number(form.clicks),
+        active: form.active,
+      })
+      .then(() => {
+        setForm({
+          name: "",
+          platform: "",
+          budget: "",
+          impressions: "",
+          clicks: "",
+          active: true,
+        });
+
+        setShowForm(false);
+        loadCampaigns();
+      })
+      .catch((error) => {
+        console.error("Erro ao criar campanha:", error);
+      });
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 p-10">
@@ -36,10 +89,75 @@ function App() {
             </p>
           </div>
 
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-medium transition">
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-medium transition"
+          >
             Nova campanha
           </button>
         </div>
+
+        {showForm && (
+          <form
+            onSubmit={handleSubmit}
+            className="grid grid-cols-2 gap-4 mb-8 bg-gray-50 p-6 rounded-xl"
+          >
+            <input
+              className="p-3 border rounded-lg"
+              placeholder="Nome da campanha"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
+
+            <input
+              className="p-3 border rounded-lg"
+              placeholder="Plataforma"
+              value={form.platform}
+              onChange={(e) => setForm({ ...form, platform: e.target.value })}
+            />
+
+            <input
+              className="p-3 border rounded-lg"
+              placeholder="Budget"
+              value={form.budget}
+              onChange={(e) => setForm({ ...form, budget: e.target.value })}
+            />
+
+            <input
+              className="p-3 border rounded-lg"
+              placeholder="Impressões"
+              value={form.impressions}
+              onChange={(e) =>
+                setForm({ ...form, impressions: e.target.value })
+              }
+            />
+
+            <input
+              className="p-3 border rounded-lg"
+              placeholder="Cliques"
+              value={form.clicks}
+              onChange={(e) => setForm({ ...form, clicks: e.target.value })}
+            />
+
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={form.active}
+                onChange={(e) =>
+                  setForm({ ...form, active: e.target.checked })
+                }
+              />
+              Campanha ativa
+            </label>
+
+            <button
+              type="submit"
+              className="col-span-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl font-medium transition"
+            >
+              Salvar campanha
+            </button>
+          </form>
+        )}
 
         <table className="w-full border-collapse">
           <thead>
