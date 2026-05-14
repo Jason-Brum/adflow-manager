@@ -50,6 +50,7 @@ const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 const [loading, setLoading] = useState(true);  
 const [showForm, setShowForm] = useState(false);
 const [editingId, setEditingId] = useState<number | null>(null);
+const [searchTerm, setSearchTerm] = useState("");
 
   const [form, setForm] = useState<CampaignForm>({
     name: "",
@@ -149,6 +150,10 @@ function handleEdit(campaign: Campaign) {
   setShowForm(true);
 }
 
+const filteredCampaigns = campaigns.filter((campaign) =>
+  campaign.name.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
   return (
     <div className="min-h-screen bg-gray-100 p-10">
       <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8">
@@ -237,6 +242,13 @@ function handleEdit(campaign: Campaign) {
           </form>
         )}
 
+        <input
+          className="w-full mb-6 p-3 border rounded-lg"
+          placeholder="Buscar campanha por nome..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-gray-200 text-left">
@@ -256,14 +268,14 @@ function handleEdit(campaign: Campaign) {
                 Carregando campanhas...
               </td>
             </tr>
-          ) : campaigns.length === 0 ? (
+          ) : filteredCampaigns.length === 0 ? (
             <tr>
               <td colSpan={6} className="p-6 text-center text-gray-500">
                 Nenhuma campanha encontrada.
               </td>
             </tr>
           ) : (
-            campaigns.map((campaign) => (
+            filteredCampaigns.map((campaign) => (
               <tr
                 key={campaign.id}
                 className="border-b hover:bg-gray-50 transition"
