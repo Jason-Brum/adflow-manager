@@ -7,6 +7,8 @@ type Campaign = {
   platform: string;
   budget: number;
   active: boolean;
+  impressions: number;
+  clicks: number;
 };
 
 type CampaignForm = {
@@ -45,7 +47,9 @@ function formatCurrency(value: string) {
 
 function App() {
 const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = useState(false);
+const [loading, setLoading] = useState(true);  
+const [showForm, setShowForm] = useState(false);
+const [editingId, setEditingId] = useState<number | null>(null);
 
   const [form, setForm] = useState<CampaignForm>({
     name: "",
@@ -80,39 +84,45 @@ const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = u
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
 
-    axios
-      .post("http://localhost:8080/campaigns", {
-        name: form.name,
-        platform: form.platform,
-        budget: Number(onlyNumbers(form.budget)) / 100,        
-        impressions: Number(onlyNumbers(form.impressions)),
-        clicks: Number(onlyNumbers(form.clicks)),
-        active: form.active,
-      })
-      .then(() => {
-        setForm({
-          name: "",
-          platform: "",
-          budget: "",
-          impressions: "",
-          clicks: "",
-          active: true,
+    const payload = {
+      name: form.name,
+      platform: form.platform,
+      budget: Number(onlyNumbers(form.budget)) / 100,
+      impressions: Number(onlyNumbers(form.impressions)),
+      clicks: Number(onlyNumbers(form.clicks)),
+      active: form.active,
+    };
+
+    const request = editingId
+  ? axios.put(`http://localhost:8080/campaigns/${editingId}`, payload)
+  : axios.post("http://localhost:8080/campaigns", payload);
+
+      request
+        .then(() => {
+          setForm({
+            name: "",
+            platform: "",
+            budget: "",
+            impressions: "",
+            clicks: "",
+            active: true,
+          });
+
+          setEditingId(null);
+          setShowForm(false);
+          loadCampaigns();
+        })
+        .catch((error) => {
+          console.error("Erro ao salvar campanha:", error);
         });
+        }
 
-        setShowForm(false);
-        loadCampaigns();
-      })
-      .catch((error) => {
-        console.error("Erro ao criar campanha:", error);
-      });
-  }
+        function handleDelete(id: number) {
+        const confirmed = window.confirm(
+          "Tem certeza que deseja excluir esta campanha?"
+        );
 
-  function handleDelete(id: number) {
-  const confirmed = window.confirm(
-    "Tem certeza que deseja excluir esta campanha?"
-  );
-
-  if (!confirmed) return;
+        if (!confirmed) return;
 
   axios
     .delete(`http://localhost:8080/campaigns/${id}`)
@@ -122,6 +132,21 @@ const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = u
     .catch((error) => {
       console.error("Erro ao excluir campanha:", error);
     });
+}
+
+function handleEdit(campaign: Campaign) {
+  setEditingId(campaign.id);
+
+  setForm({
+    name: campaign.name,
+    platform: campaign.platform,
+    budget: formatCurrency(String(Math.round(campaign.budget * 100))),
+    impressions: formatNumber(String(campaign.impressions)),
+    clicks: formatNumber(String(campaign.clicks)),
+    active: campaign.active,
+  });
+
+  setShowForm(true);
 }
 
   return (
@@ -227,13 +252,13 @@ const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = u
           <tbody>
           {loading ? (
             <tr>
-              <td colSpan={4} className="p-6 text-center text-gray-500">
+              <td colSpan={6} className="p-6 text-center text-gray-500">
                 Carregando campanhas...
               </td>
             </tr>
           ) : campaigns.length === 0 ? (
             <tr>
-              <td colSpan={4} className="p-6 text-center text-gray-500">
+              <td colSpan={6} className="p-6 text-center text-gray-500">
                 Nenhuma campanha encontrada.
               </td>
             </tr>
@@ -264,6 +289,12 @@ const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = u
                   </span>
                 </td>
                 <td className="p-4">
+                  <button
+                    onClick={() => handleEdit(campaign)}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm mr-2"
+                  >
+                    Editar
+                  </button>
                   <button
                     onClick={() => handleDelete(campaign.id)}
                     className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm"
