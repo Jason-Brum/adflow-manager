@@ -6,6 +6,7 @@ type Campaign = {
   name: string;
   platform: string;
   budget: number;
+  active: boolean;
 };
 
 type CampaignForm = {
@@ -18,8 +19,8 @@ type CampaignForm = {
 };
 
 function App() {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [showForm, setShowForm] = useState(false);
+const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = useState(false);
 
   const [form, setForm] = useState<CampaignForm>({
     name: "",
@@ -31,19 +32,25 @@ function App() {
   });
 
   function loadCampaigns() {
-    axios
-      .get("http://localhost:8080/campaigns")
-      .then((response) => {
-        setCampaigns(response.data.content);
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar campanhas:", error);
-      });
-  }
+  setLoading(true);
+
+  axios
+    .get("http://localhost:8080/campaigns")
+    .then((response) => {
+      setCampaigns(response.data.content);
+    })
+    .catch((error) => {
+      console.error("Erro ao buscar campanhas:", error);
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+}
 
   useEffect(() => {
     loadCampaigns();
   }, []);
+
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -166,11 +173,25 @@ function App() {
               <th className="p-4">Nome</th>
               <th className="p-4">Plataforma</th>
               <th className="p-4">Budget</th>
+              <th className="p-4">Status</th>
             </tr>
           </thead>
 
           <tbody>
-            {campaigns.map((campaign) => (
+          {loading ? (
+            <tr>
+              <td colSpan={4} className="p-6 text-center text-gray-500">
+                Carregando campanhas...
+              </td>
+            </tr>
+          ) : campaigns.length === 0 ? (
+            <tr>
+              <td colSpan={4} className="p-6 text-center text-gray-500">
+                Nenhuma campanha encontrada.
+              </td>
+            </tr>
+          ) : (
+            campaigns.map((campaign) => (
               <tr
                 key={campaign.id}
                 className="border-b hover:bg-gray-50 transition"
@@ -181,9 +202,21 @@ function App() {
                 <td className="p-4">
                   R$ {campaign.budget.toLocaleString("pt-BR")}
                 </td>
+                <td className="p-4">
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      campaign.active
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {campaign.active ? "Ativa" : "Inativa"}
+                  </span>
+                </td>
               </tr>
-            ))}
-          </tbody>
+            ))
+          )}
+        </tbody>
         </table>
       </div>
     </div>
