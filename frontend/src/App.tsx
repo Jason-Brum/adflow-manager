@@ -18,6 +18,31 @@ type CampaignForm = {
   active: boolean;
 };
 
+function onlyNumbers(value: string) {
+  return value.replace(/\D/g, "");
+}
+
+function formatNumber(value: string) {
+  const numbers = onlyNumbers(value);
+
+  if (!numbers) return "";
+
+  return Number(numbers).toLocaleString("pt-BR");
+}
+
+function formatCurrency(value: string) {
+  const numbers = onlyNumbers(value);
+
+  if (!numbers) return "";
+
+  const amount = Number(numbers) / 100;
+
+  return amount.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
+
 function App() {
 const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = useState(false);
@@ -59,9 +84,9 @@ const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = u
       .post("http://localhost:8080/campaigns", {
         name: form.name,
         platform: form.platform,
-        budget: Number(form.budget),
-        impressions: Number(form.impressions),
-        clicks: Number(form.clicks),
+        budget: Number(onlyNumbers(form.budget)) / 100,        
+        impressions: Number(onlyNumbers(form.impressions)),
+        clicks: Number(onlyNumbers(form.clicks)),
         active: form.active,
       })
       .then(() => {
@@ -127,7 +152,9 @@ const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = u
               className="p-3 border rounded-lg"
               placeholder="Budget"
               value={form.budget}
-              onChange={(e) => setForm({ ...form, budget: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, budget: formatCurrency(e.target.value) })
+              }
             />
 
             <input
@@ -135,7 +162,7 @@ const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = u
               placeholder="Impressões"
               value={form.impressions}
               onChange={(e) =>
-                setForm({ ...form, impressions: e.target.value })
+                setForm({ ...form, impressions: formatNumber(e.target.value) })
               }
             />
 
@@ -143,7 +170,9 @@ const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = u
               className="p-3 border rounded-lg"
               placeholder="Cliques"
               value={form.clicks}
-              onChange={(e) => setForm({ ...form, clicks: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, clicks: formatNumber(e.target.value) })
+              }
             />
 
             <label className="flex items-center gap-2">
@@ -200,7 +229,10 @@ const [loading, setLoading] = useState(true);  const [showForm, setShowForm] = u
                 <td className="p-4 font-medium">{campaign.name}</td>
                 <td className="p-4">{campaign.platform}</td>
                 <td className="p-4">
-                  R$ {campaign.budget.toLocaleString("pt-BR")}
+                  {campaign.budget.toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
                 </td>
                 <td className="p-4">
                   <span
