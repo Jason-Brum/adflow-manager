@@ -26,6 +26,16 @@ Projeto full stack em desenvolvimento para simular um sistema interno de gestão
 - Filtro por plataforma
 - Documentação com Swagger
 
+## Screenshots
+
+### Dashboard principal
+
+![Dashboard](docs/images/dashboard.png)
+
+### Criação e edição de campanhas
+
+![Formulário](docs/images/dashboard-form.png)
+
 ## Endpoints principais
 
 ```txt
